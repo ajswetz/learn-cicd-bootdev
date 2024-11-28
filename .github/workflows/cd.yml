@@ -9,6 +9,9 @@ jobs:
         name: Deploy
         runs-on: ubuntu-latest
 
+        env:
+            GOOSE_DBSTRING: ${{ secrets.GOOSE_DBSTRING }}
+
         steps:
             - name: Check out code
               uses: actions/checkout@v4
@@ -17,15 +20,6 @@ jobs:
               uses: actions/setup-go@v5
               with:
                 go-version: "1.23.0"
-
-            - name: Test repository secret
-              run: echo $GOOSE_DBSTRING
-
-            - name: Test repository variable 1
-              run: echo $GOOSE_DRIVER
-
-            - name: Test repository variable 2
-              run: echo $GOOSE_MIGRATION_DIR
 
             - name: Install Goose DB migration tool
               run: go install github.com/pressly/goose/v3/cmd/goose@latest
@@ -46,6 +40,9 @@ jobs:
 
             - name: Build Docker image and push to Google Artifact Registry
               run: gcloud builds submit --tag us-central1-docker.pkg.dev/notely-443019/notely-ar-repo/notely:latest .
+
+            - name: Run Goose migration up
+              run: goose up
 
             - name: Deploy to Cloud Run
               run: gcloud run deploy notely --image us-central1-docker.pkg.dev/notely-443019/notely-ar-repo/notely:latest --region us-central1 --allow-unauthenticated --project notely-443019 --max-instances=4
