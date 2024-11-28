@@ -4,4 +4,4 @@ if [ -f .env ]; then
     source .env
 fi
 
-goose up
+GOOSE_DRIVER=turso GOOSE_MIGRATION_DIR=sql/schema goose up
