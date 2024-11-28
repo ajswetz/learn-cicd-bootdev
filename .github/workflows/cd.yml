@@ -18,6 +18,18 @@ jobs:
               with:
                 go-version: "1.23.0"
 
+            - name: Test repository secret
+              run: echo $GOOSE_DBSTRING
+
+            - name: Test repository variable 1
+              run: echo $GOOSE_DRIVER
+
+            - name: Test repository variable 2
+              run: echo $GOOSE_MIGRATION_DIR
+
+            - name: Install Goose DB migration tool
+              run: go install github.com/pressly/goose/v3/cmd/goose@latest
+
             - name: Build the app
               run: ./scripts/buildprod.sh
 
